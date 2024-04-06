@@ -1,0 +1,23 @@
+spring:
+  application:
+    group: itau
+    name: api-transferencia
+  data:
+    mongodb:
+      database: api_transferencia
+      uri: mongodb://localhost:27017
+      replicaSet: repDB
+
+server.port: 8080
+
+service:
+  clientes:
+    service: http://localhost:9090/clientes
+    dados-endpoint: {idCliente}
+  contas:
+    service: http://localhost:9090/contas
+    dados-endpoint: {idConta}
+    saldo-endpoint: /saldo/{saldo}
+  bacen:
+    service: http://localhost:9090/notificacoes
+    notificacao-endpoint: {notificacao}
