@@ -15,15 +15,6 @@ public class SpringDocConfiguration {
     private static final String MAIN_PACKAGE = "com.desafioitau.api.transferencia";
 
     @Bean
-    public GroupedOpenApi publicApi() {
-        return GroupedOpenApi.builder()
-                .packagesToScan(MAIN_PACKAGE)
-                .group("Todos")
-                .pathsToMatch("/**")
-                .build();
-    }
-
-    @Bean
     public GroupedOpenApi publicApiV1() {
         return GroupedOpenApi.builder()
                 .packagesToScan(MAIN_PACKAGE)

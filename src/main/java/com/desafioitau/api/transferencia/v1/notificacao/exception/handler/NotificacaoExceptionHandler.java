@@ -3,6 +3,7 @@ package com.desafioitau.api.transferencia.v1.notificacao.exception.handler;
 import com.desafioitau.api.transferencia.v1.constants.MessagesConstants;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoException;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoInternalServerErrorException;
+import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoTentativasExcedidasException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,6 +25,13 @@ public class NotificacaoExceptionHandler {
     @ExceptionHandler(value = {NotificacaoInternalServerErrorException.class})
     @ResponseBody
     protected String handleInternalServerErrorException(NotificacaoException ex) {
+        return MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR;
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(value = {NotificacaoServiceUnavailableException.class})
+    @ResponseBody
+    protected String handleNotificacaoServiceUnavailableException(NotificacaoServiceUnavailableException ex) {
         return MessagesConstants.MSG_SERVICO_INDISPONIVEL;
     }
 }

@@ -12,4 +12,5 @@ public class MessagesConstants {
     public static final String MSG_LIMITE_DIARIO_INSUFICIENTE = "Limite diário insuficiente.";
     public static final String MSG_TENTATIVAS_EXCEDIDAS = "Tentativas excedidas.";
     public static final String MSG_LIMITE_DIARIO_ZERADO = "Limite diário zerado.";
+    public static final String MSG_ERRO_INTERNO_DO_SERVIDOR = "Erro interno do servidor.";
 }

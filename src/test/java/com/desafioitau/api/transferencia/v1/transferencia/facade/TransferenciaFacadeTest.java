@@ -2,6 +2,7 @@ package com.desafioitau.api.transferencia.v1.transferencia.facade;
 
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteInternalServerErrorException;
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteNotFoundException;
+import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.cliente.fixture.ClienteFixture;
 import com.desafioitau.api.transferencia.v1.cliente.service.ClienteService;
 import com.desafioitau.api.transferencia.v1.conta.dto.ContaResponseDTO;
@@ -10,6 +11,7 @@ import com.desafioitau.api.transferencia.v1.conta.fixture.ContaFixture;
 import com.desafioitau.api.transferencia.v1.conta.service.ContaService;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoException;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoInternalServerErrorException;
+import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoTentativasExcedidasException;
 import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoService;
 import com.desafioitau.api.transferencia.v1.transferencia.fixture.TransferenciaFixture;
@@ -42,8 +44,6 @@ import static org.mockito.Mockito.verify;
 class TransferenciaFacadeTest {
 
     @Mock
-    private Lock lock;
-    @Mock
     TransferenciaService transferenciaService;
     @Mock
     ClienteService clienteService;
@@ -66,15 +66,14 @@ class TransferenciaFacadeTest {
 
         assertDoesNotThrow(() -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
 
-        verify(lock, times(1)).lock();
         verify(transferenciaService, times(1)).salvarTransaferencia(any());
         verify(contaService, times(1)).atualizarSaldo(any());
-        verify(lock, times(1)).unlock();
     }
 
     static Stream<Class<? extends Exception>> sourceEfetuarTransferenciaQuandoBuscarCliente () {
         return Stream.of(ClienteNotFoundException.class,
-                ClienteInternalServerErrorException.class
+                ClienteInternalServerErrorException.class,
+                ClienteServiceUnavailableException.class
         );
     }
 
@@ -85,16 +84,15 @@ class TransferenciaFacadeTest {
 
         Assertions.assertThrows(source, () -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
 
-        verify(lock, times(0)).lock();
         verify(transferenciaService, times(0)).salvarTransaferencia(any());
         verify(contaService, times(0)).atualizarSaldo(any());
-        verify(lock, times(0)).unlock();
     }
 
     static Stream<Class<? extends Exception>> sourceEfetuarTransferenciaQuandoBuscarConta () {
         return Stream.of(
                 ContaNotFoundException.class,
-                ContaInternalServerErrorException.class
+                ContaInternalServerErrorException.class,
+                ContaServiceUnavailableException.class
         );
     }
 
@@ -105,10 +103,8 @@ class TransferenciaFacadeTest {
 
         Assertions.assertThrows(source, () -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
 
-        verify(lock, times(1)).lock();
         verify(transferenciaService, times(0)).salvarTransaferencia(any());
         verify(contaService, times(0)).atualizarSaldo(any());
-        verify(lock, times(1)).unlock();
     }
 
     static Stream<Pair<Class<? extends Exception>, ContaResponseDTO>> sourceEfetuarTransferenciaDeveDarException () {
@@ -127,16 +123,15 @@ class TransferenciaFacadeTest {
 
         Assertions.assertThrows(source.getLeft(), () -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
 
-        verify(lock, times(1)).lock();
         verify(transferenciaService, times(0)).salvarTransaferencia(any());
         verify(contaService, times(0)).atualizarSaldo(any());
-        verify(lock, times(1)).unlock();
     }
 
     static Stream<Class<? extends NotificacaoException>> sourceEfetuarTransferenciaQuandoEnviarNotificacao() {
         return Stream.of(
                 NotificacaoTentativasExcedidasException.class,
-                NotificacaoInternalServerErrorException.class
+                NotificacaoInternalServerErrorException.class,
+                NotificacaoServiceUnavailableException.class
         );
     }
 
@@ -149,10 +144,8 @@ class TransferenciaFacadeTest {
 
         Assertions.assertThrows(source, () -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
 
-        verify(lock, times(1)).lock();
         verify(transferenciaService, times(1)).salvarTransaferencia(any());
         verify(contaService, times(0)).atualizarSaldo(any());
-        verify(lock, times(1)).unlock();
     }
 
 }

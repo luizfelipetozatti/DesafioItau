@@ -19,15 +19,6 @@ class SpringDocConfigurationTest {
     private SpringDocConfiguration configuration;
 
     @Test
-    void publicApi() {
-
-        var result = configuration.publicApi();
-
-        assertEquals("Todos", result.getGroup());
-        assertEquals(Collections.singletonList("/**"), result.getPathsToMatch());
-    }
-
-    @Test
     void publicApiV1() {
 
         var result = configuration.publicApiV1();

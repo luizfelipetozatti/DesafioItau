@@ -1,4 +1,4 @@
-package com.desafioitau.api.transferencia.v1.saldo.dto;
+package com.desafioitau.api.transferencia.v1.conta.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

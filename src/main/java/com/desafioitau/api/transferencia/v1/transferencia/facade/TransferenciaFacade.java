@@ -8,20 +8,18 @@ import com.desafioitau.api.transferencia.v1.conta.service.ContaService;
 import com.desafioitau.api.transferencia.v1.notificacao.dto.NotificacaoRequestDTO;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoException;
 import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoService;
-import com.desafioitau.api.transferencia.v1.saldo.dto.SaldoRequestDTO;
+import com.desafioitau.api.transferencia.v1.conta.dto.SaldoRequestDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaRequestDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 public class TransferenciaFacade {
 
-    @Autowired
-    private Lock lock;
     @Autowired
     TransferenciaService transferenciaService;
     @Autowired
@@ -36,6 +34,7 @@ public class TransferenciaFacade {
     public String efetuarTransferencia(TransferenciaRequestDTO request) throws Exception {
         var cliente = clienteService.buscarCliente(request.getIdCliente());
 
+        var lock = new ReentrantLock();
         lock.lock();
         try {
             var contaOrigem = contaService.buscarConta(request.getConta().getIdOrigem());

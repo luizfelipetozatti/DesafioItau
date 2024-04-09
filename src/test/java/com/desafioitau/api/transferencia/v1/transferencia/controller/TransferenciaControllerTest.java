@@ -2,9 +2,11 @@ package com.desafioitau.api.transferencia.v1.transferencia.controller;
 
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteInternalServerErrorException;
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteNotFoundException;
+import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.constants.MessagesConstants;
 import com.desafioitau.api.transferencia.v1.conta.exception.*;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoInternalServerErrorException;
+import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoTentativasExcedidasException;
 import com.desafioitau.api.transferencia.v1.transferencia.facade.TransferenciaFacade;
 import com.desafioitau.api.transferencia.v1.transferencia.fixture.TransferenciaFixture;
@@ -57,9 +59,12 @@ class TransferenciaControllerTest {
 
     static Stream<Triple<Class<? extends Exception>, ResultMatcher, String>> sourceEfetuarTransferencia() {
         return Stream.of(Triple.of(ClienteNotFoundException.class, status().isNotFound(), MessagesConstants.MSG_CLIENTE_NAO_ENCONTRADO),
-                Triple.of(ContaInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
-                Triple.of(ClienteInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
-                Triple.of(NotificacaoInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
+                Triple.of(ContaInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR),
+                Triple.of(ContaServiceUnavailableException.class, status().isServiceUnavailable(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
+                Triple.of(ClienteInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR),
+                Triple.of(ClienteServiceUnavailableException.class, status().isServiceUnavailable(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
+                Triple.of(NotificacaoInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR),
+                Triple.of(NotificacaoServiceUnavailableException.class, status().isServiceUnavailable(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
                 Triple.of(NotificacaoTentativasExcedidasException.class, status().isNotAcceptable(), MessagesConstants.MSG_TENTATIVAS_EXCEDIDAS),
                 Triple.of(ContaInativaException.class, status().isNotAcceptable(), MessagesConstants.MSG_CONTA_INATIVA),
                 Triple.of(ContaSaldoIndisponivelException.class, status().isNotAcceptable(), MessagesConstants.MSG_SALDO_INDISPONIVEL),

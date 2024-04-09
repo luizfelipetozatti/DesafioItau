@@ -19,6 +19,13 @@ public class ContaExceptionHandler {
     @ExceptionHandler(value = {ContaInternalServerErrorException.class})
     @ResponseBody
     protected String handleContaInternalServerErrorException(ContaInternalServerErrorException ex) {
+        return MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR;
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(value = {ContaServiceUnavailableException.class})
+    @ResponseBody
+    protected String handleContaServiceUnavailableException(ContaServiceUnavailableException ex) {
         return MessagesConstants.MSG_SERVICO_INDISPONIVEL;
     }
 

@@ -5,7 +5,9 @@ import com.desafioitau.api.transferencia.v1.cliente.dto.ClienteResponseDTO;
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteException;
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteNotFoundException;
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteInternalServerErrorException;
+import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteServiceUnavailableException;
 import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ public class ClienteService {
     @Autowired
     private ClienteClient clienteClient;
     //TODO cachear
-    //TODO avaliar fallback ou retry circuit break
+    @CircuitBreaker(name = "defaultCircuitBreaker")
     public ClienteResponseDTO buscarCliente(String idCliente) throws ClienteException {
         try {
             return clienteClient.buscarCliente(idCliente);
@@ -23,6 +25,8 @@ public class ClienteService {
             throw new ClienteNotFoundException(ex.getCause());
         } catch (FeignException.InternalServerError ex) {
             throw new ClienteInternalServerErrorException(ex);
+        } catch (FeignException.ServiceUnavailable ex) {
+            throw new ClienteServiceUnavailableException(ex);
         }
     }
 }
