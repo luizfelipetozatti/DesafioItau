@@ -5,9 +5,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "clientes", url = "${service.clientes.service}")
+@FeignClient(name = "${external-api.clientes.name}", url = "${external-api.clientes.url}")
 public interface ClienteClient {
 
-    @GetMapping(value = "${service.clientes.dados-endpoint}")
+    @GetMapping(value = "${external-api.clientes.dados-endpoint}")
     ClienteResponseDTO buscarCliente(@PathVariable(name = "idCliente") String idCliente);
 }

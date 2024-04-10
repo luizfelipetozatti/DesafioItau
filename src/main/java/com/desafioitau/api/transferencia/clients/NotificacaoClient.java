@@ -6,9 +6,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "notificacao", url = "${service.bacen.service}", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "${external-api.notificacoes.name}", url = "${external-api.notificacoes.url}", configuration = FeignClientConfiguration.class)
 public interface NotificacaoClient {
 
-    @PostMapping(value = "${service.bacen.notificacao-endpoint}")
+    @PostMapping(value = "${external-api.notificacoes.notificacao-endpoint}")
     void enviarNotificacao(@RequestBody NotificacaoRequestDTO notificacao);
 }

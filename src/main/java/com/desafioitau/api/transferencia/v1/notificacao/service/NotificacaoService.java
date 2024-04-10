@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NotificacaoService {
+    public static final String DEFAULT_CIRCUIT_BREAKER = "defaultCircuitBreaker";
 
     @Autowired
     private NotificacaoClient notificacaoClient;
 
-    @CircuitBreaker(name = "defaultCircuitBreaker")
+    @CircuitBreaker(name = DEFAULT_CIRCUIT_BREAKER)
     public void enviarNotificacao(NotificacaoRequestDTO notificacao) throws NotificacaoException {
         try {
             notificacaoClient.enviarNotificacao(notificacao);

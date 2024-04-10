@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ContaService {
+    public static final String DEFAULT_CIRCUIT_BREAKER = "defaultCircuitBreaker";
 
     @Autowired
     private ContaClient contaClient;
 
-    @CircuitBreaker(name = "defaultCircuitBreaker")
+    @CircuitBreaker(name = DEFAULT_CIRCUIT_BREAKER)
     public ContaResponseDTO buscarConta(String idOrigem) throws ContaException {
         try {
             return contaClient.buscarConta(idOrigem);

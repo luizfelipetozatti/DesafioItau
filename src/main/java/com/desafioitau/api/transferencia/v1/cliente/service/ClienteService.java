@@ -13,11 +13,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ClienteService {
+    public static final String DEFAULT_CIRCUIT_BREAKER = "defaultCircuitBreaker";
 
     @Autowired
     private ClienteClient clienteClient;
     //TODO cachear
-    @CircuitBreaker(name = "defaultCircuitBreaker")
+    @CircuitBreaker(name = DEFAULT_CIRCUIT_BREAKER)
     public ClienteResponseDTO buscarCliente(String idCliente) throws ClienteException {
         try {
             return clienteClient.buscarCliente(idCliente);

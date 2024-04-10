@@ -4,6 +4,7 @@ import com.desafioitau.api.transferencia.clients.ClienteClient;
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteException;
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteInternalServerErrorException;
 import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteNotFoundException;
+import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.cliente.fixture.ClienteFixture;
 import feign.FeignException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,7 +39,9 @@ class ClienteServiceTest {
 
     static Stream<Pair<Class<? extends FeignException>, Class<? extends ClienteException>>> sourceBuscarCliente(){
         return Stream.of(Pair.of(FeignException.NotFound.class, ClienteNotFoundException.class),
-                Pair.of(FeignException.InternalServerError.class, ClienteInternalServerErrorException.class));
+                Pair.of(FeignException.InternalServerError.class, ClienteInternalServerErrorException.class),
+                Pair.of(FeignException.ServiceUnavailable.class, ClienteServiceUnavailableException.class)
+        );
     }
 
     @ParameterizedTest

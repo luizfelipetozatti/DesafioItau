@@ -8,26 +8,22 @@ spring:
       uri: mongodb://localhost:27017
       replicaSet: repDB
 
-resilience4j.circuitbreaker:
-  configs:
-    default:
-      registerHealthIndicator: true
-      slidingWindowSize: 1000
-      slidingWindowType: COUNT_BASED
-      failureRateThreshold: 50
-      slowCallRateThreshold: 100
-      permittedNumberOfCallsInHalfOpenState: 500
-      waitDurationInOpenState: 30000
-      slowCallDurationThreshold: 5000
-  instances:
-    defaultCircuitBreaker:
-      baseConfig: default
-
-resilience4j.timelimiter:
-  configs:
-    default:
-      timeoutDuration: 240s
-      cancelRunningFuture: true
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-size: 100
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        wait-duration-in-open-state: 5000
+        sliding-window-type: COUNT_BASED
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 100
+        slow-call-duration-threshold: 6000
+    instances:
+      defaultCircuitBreaker:
+        baseConfig: default
 
 external-api:
   clientes:
@@ -36,9 +32,10 @@ external-api:
     dados-endpoint: /{idCliente}
   contas:
     name: contas
-    service: http://localhost:9090/contas
+    url: http://localhost:9090/contas
     dados-endpoint: /{idConta}
     saldo-endpoint: /saldo/{saldo}
-  bacen:
-    service: http://localhost:9090/notificacoes
+  notificacoes:
+    name: bacen
+    url: http://localhost:9090/notificacoes
     notificacao-endpoint: /{notificacao}

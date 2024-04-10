@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "contas", url = "${service.contas.service}")
+@FeignClient(name = "${external-api.contas.name}", url = "${external-api.contas.url}")
 public interface ContaClient {
 
-    @GetMapping(value = "${service.contas.dados-endpoint}")
+    @GetMapping(value = "${external-api.contas.dados-endpoint}")
     ContaResponseDTO buscarConta(@PathVariable(name = "idConta") String idConta);
 
-    @PutMapping(value = "${service.contas.saldo-endpoint}")
+    @PutMapping(value = "${external-api.contas.saldo-endpoint}")
     ContaResponseDTO atualizarSaldo(@RequestBody SaldoRequestDTO request);
 }

@@ -2,6 +2,7 @@ package com.desafioitau.api.transferencia.v1.notificacao.service;
 
 import com.desafioitau.api.transferencia.clients.NotificacaoClient;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoInternalServerErrorException;
+import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoTentativasExcedidasException;
 import feign.FeignException;
 import feign.RetryableException;
@@ -36,7 +37,8 @@ class NotificacaoServiceTest {
     static Stream<Pair<Class<? extends Exception>, Class<? extends  Exception>>> sourceEnviarNotificacaoDeveDarException() {
         return Stream.of(
                 Pair.of(RetryableException.class, NotificacaoTentativasExcedidasException.class),
-                Pair.of(FeignException.InternalServerError.class, NotificacaoInternalServerErrorException.class)
+                Pair.of(FeignException.InternalServerError.class, NotificacaoInternalServerErrorException.class),
+                Pair.of(FeignException.ServiceUnavailable.class, NotificacaoServiceUnavailableException.class)
         );
     }
 
