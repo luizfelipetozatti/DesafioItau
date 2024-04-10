@@ -1,4 +1,4 @@
-package com.desafioitau.api.transferencia.v1.notificacao.exception;
+package com.desafioitau.api.transferencia.exceptions.notificacao.exception;
 
 public class NotificacaoTentativasExcedidasException extends NotificacaoException {
 

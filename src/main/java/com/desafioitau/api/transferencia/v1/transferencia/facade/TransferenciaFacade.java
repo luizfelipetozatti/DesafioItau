@@ -1,14 +1,14 @@
 package com.desafioitau.api.transferencia.v1.transferencia.facade;
 
+import com.desafioitau.api.transferencia.exceptions.conta.exception.*;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoException;
 import com.desafioitau.api.transferencia.v1.cliente.dto.ClienteResponseDTO;
 import com.desafioitau.api.transferencia.v1.cliente.service.ClienteService;
 import com.desafioitau.api.transferencia.v1.conta.dto.ContaResponseDTO;
-import com.desafioitau.api.transferencia.v1.conta.exception.*;
+import com.desafioitau.api.transferencia.v1.conta.dto.SaldoRequestDTO;
 import com.desafioitau.api.transferencia.v1.conta.service.ContaService;
 import com.desafioitau.api.transferencia.v1.notificacao.dto.NotificacaoRequestDTO;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoException;
 import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoService;
-import com.desafioitau.api.transferencia.v1.conta.dto.SaldoRequestDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaRequestDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
 import org.springframework.beans.factory.annotation.Autowired;

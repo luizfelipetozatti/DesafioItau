@@ -1,9 +1,9 @@
 package com.desafioitau.api.transferencia.v1.notificacao.service;
 
 import com.desafioitau.api.transferencia.clients.NotificacaoClient;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoServiceUnavailableException;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoTentativasExcedidasException;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoTentativasExcedidasException;
 import feign.FeignException;
 import feign.RetryableException;
 import org.apache.commons.lang3.tuple.Pair;

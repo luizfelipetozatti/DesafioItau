@@ -2,10 +2,10 @@ package com.desafioitau.api.transferencia.v1.cliente.service;
 
 import com.desafioitau.api.transferencia.clients.ClienteClient;
 import com.desafioitau.api.transferencia.v1.cliente.dto.ClienteResponseDTO;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteNotFoundException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteNotFoundException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteServiceUnavailableException;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;

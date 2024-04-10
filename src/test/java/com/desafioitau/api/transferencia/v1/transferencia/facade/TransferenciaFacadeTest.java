@@ -1,18 +1,18 @@
 package com.desafioitau.api.transferencia.v1.transferencia.facade;
 
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteNotFoundException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteNotFoundException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.*;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoException;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoTentativasExcedidasException;
 import com.desafioitau.api.transferencia.v1.cliente.fixture.ClienteFixture;
 import com.desafioitau.api.transferencia.v1.cliente.service.ClienteService;
 import com.desafioitau.api.transferencia.v1.conta.dto.ContaResponseDTO;
-import com.desafioitau.api.transferencia.v1.conta.exception.*;
 import com.desafioitau.api.transferencia.v1.conta.fixture.ContaFixture;
 import com.desafioitau.api.transferencia.v1.conta.service.ContaService;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoException;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoServiceUnavailableException;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoTentativasExcedidasException;
 import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoService;
 import com.desafioitau.api.transferencia.v1.transferencia.fixture.TransferenciaFixture;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
@@ -28,8 +28,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.locks.Lock;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

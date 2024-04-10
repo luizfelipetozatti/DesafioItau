@@ -2,11 +2,11 @@ package com.desafioitau.api.transferencia.v1.conta.service;
 
 import com.desafioitau.api.transferencia.clients.ContaClient;
 import com.desafioitau.api.transferencia.v1.conta.dto.ContaResponseDTO;
-import com.desafioitau.api.transferencia.v1.conta.exception.ContaException;
-import com.desafioitau.api.transferencia.v1.conta.exception.ContaInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.conta.exception.ContaNotFoundException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaNotFoundException;
 import com.desafioitau.api.transferencia.v1.conta.dto.SaldoRequestDTO;
-import com.desafioitau.api.transferencia.v1.conta.exception.ContaServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaServiceUnavailableException;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;

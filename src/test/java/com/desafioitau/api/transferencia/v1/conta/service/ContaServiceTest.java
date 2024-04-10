@@ -1,9 +1,9 @@
 package com.desafioitau.api.transferencia.v1.conta.service;
 
 import com.desafioitau.api.transferencia.clients.ContaClient;
-import com.desafioitau.api.transferencia.v1.conta.exception.ContaInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.conta.exception.ContaNotFoundException;
-import com.desafioitau.api.transferencia.v1.conta.exception.ContaServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaNotFoundException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.conta.fixture.ContaFixture;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;

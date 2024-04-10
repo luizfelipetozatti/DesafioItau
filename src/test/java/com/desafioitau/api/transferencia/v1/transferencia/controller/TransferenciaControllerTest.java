@@ -1,17 +1,19 @@
 package com.desafioitau.api.transferencia.v1.transferencia.controller;
 
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteNotFoundException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.ErrorInfo;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteNotFoundException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.*;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoTentativasExcedidasException;
 import com.desafioitau.api.transferencia.v1.constants.MessagesConstants;
-import com.desafioitau.api.transferencia.v1.conta.exception.*;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoServiceUnavailableException;
-import com.desafioitau.api.transferencia.v1.notificacao.exception.NotificacaoTentativasExcedidasException;
 import com.desafioitau.api.transferencia.v1.transferencia.facade.TransferenciaFacade;
 import com.desafioitau.api.transferencia.v1.transferencia.fixture.TransferenciaFixture;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.tuple.Triple;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -57,25 +59,25 @@ class TransferenciaControllerTest {
                 .andExpect(status().isOk());
     }
 
-    static Stream<Triple<Class<? extends Exception>, ResultMatcher, String>> sourceEfetuarTransferencia() {
-        return Stream.of(Triple.of(ClienteNotFoundException.class, status().isNotFound(), MessagesConstants.MSG_CLIENTE_NAO_ENCONTRADO),
-                Triple.of(ContaInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR),
-                Triple.of(ContaServiceUnavailableException.class, status().isServiceUnavailable(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
-                Triple.of(ClienteInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR),
-                Triple.of(ClienteServiceUnavailableException.class, status().isServiceUnavailable(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
-                Triple.of(NotificacaoInternalServerErrorException.class, status().isInternalServerError(), MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR),
-                Triple.of(NotificacaoServiceUnavailableException.class, status().isServiceUnavailable(), MessagesConstants.MSG_SERVICO_INDISPONIVEL),
-                Triple.of(NotificacaoTentativasExcedidasException.class, status().isNotAcceptable(), MessagesConstants.MSG_TENTATIVAS_EXCEDIDAS),
-                Triple.of(ContaInativaException.class, status().isNotAcceptable(), MessagesConstants.MSG_CONTA_INATIVA),
-                Triple.of(ContaSaldoIndisponivelException.class, status().isNotAcceptable(), MessagesConstants.MSG_SALDO_INDISPONIVEL),
-                Triple.of(ContaLimiteDiarioInsuficienteException.class, status().isNotAcceptable(), MessagesConstants.MSG_LIMITE_DIARIO_INSUFICIENTE),
-                Triple.of(ContaLimiteDiarioZeradoException.class, status().isNotAcceptable(), MessagesConstants.MSG_LIMITE_DIARIO_ZERADO)
+    static Stream<Triple<Class<? extends Exception>, ResultMatcher, ErrorInfo>> sourceEfetuarTransferencia() {
+        return Stream.of(Triple.of(ClienteNotFoundException.class, status().isNotFound(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_CLIENTE_NAO_ENCONTRADO).build()),
+                Triple.of(ContaInternalServerErrorException.class, status().isInternalServerError(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR).build()),
+                Triple.of(ContaServiceUnavailableException.class, status().isServiceUnavailable(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_SERVICO_INDISPONIVEL).build()),
+                Triple.of(ClienteInternalServerErrorException.class, status().isInternalServerError(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR).build()),
+                Triple.of(ClienteServiceUnavailableException.class, status().isServiceUnavailable(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_SERVICO_INDISPONIVEL).build()),
+                Triple.of(NotificacaoInternalServerErrorException.class, status().isInternalServerError(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_ERRO_INTERNO_DO_SERVIDOR).build()),
+                Triple.of(NotificacaoServiceUnavailableException.class, status().isServiceUnavailable(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_SERVICO_INDISPONIVEL).build()),
+                Triple.of(NotificacaoTentativasExcedidasException.class, status().isNotAcceptable(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_TENTATIVAS_EXCEDIDAS).build()),
+                Triple.of(ContaInativaException.class, status().isNotAcceptable(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_CONTA_INATIVA).build()),
+                Triple.of(ContaSaldoIndisponivelException.class, status().isNotAcceptable(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_SALDO_INDISPONIVEL).build()),
+                Triple.of(ContaLimiteDiarioInsuficienteException.class, status().isNotAcceptable(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_LIMITE_DIARIO_INSUFICIENTE).build()),
+                Triple.of(ContaLimiteDiarioZeradoException.class, status().isNotAcceptable(), ErrorInfo.builder().mensagem(MessagesConstants.MSG_LIMITE_DIARIO_ZERADO).build())
         );
     }
 
     @ParameterizedTest
     @MethodSource("sourceEfetuarTransferencia")
-    void efetuarTransferenciaDeveDarExceptionQuandoEfetuarTransferencia(Triple<Class<? extends Exception>, ResultMatcher, String> source) throws Exception {
+    void efetuarTransferenciaDeveDarExceptionQuandoEfetuarTransferencia(Triple<Class<? extends Exception>, ResultMatcher, ErrorInfo> source) throws Exception {
         given(facade.efetuarTransferencia(any())).willThrow(source.getLeft());
 
         var jsonRequest = objectMapper.writeValueAsString(TransferenciaFixture.getTransferenciaRequestDTO());
@@ -84,6 +86,6 @@ class TransferenciaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(source.getMiddle())
-                .andExpect(content().string(source.getRight()));
+                .andExpect(content().json(objectMapper.writeValueAsString(source.getRight())));
     }
 }

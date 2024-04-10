@@ -1,10 +1,10 @@
 package com.desafioitau.api.transferencia.v1.cliente.service;
 
 import com.desafioitau.api.transferencia.clients.ClienteClient;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteInternalServerErrorException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteNotFoundException;
-import com.desafioitau.api.transferencia.v1.cliente.exception.ClienteServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteNotFoundException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.cliente.fixture.ClienteFixture;
 import feign.FeignException;
 import org.apache.commons.lang3.tuple.Pair;
