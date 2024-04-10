@@ -1,10 +1,7 @@
 package com.desafioitau.api.transferencia.v1.cliente.service;
 
 import com.desafioitau.api.transferencia.clients.ClienteClient;
-import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteException;
-import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteInternalServerErrorException;
-import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteNotFoundException;
-import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.*;
 import com.desafioitau.api.transferencia.v1.cliente.fixture.ClienteFixture;
 import feign.FeignException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -19,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -38,9 +36,11 @@ class ClienteServiceTest {
     }
 
     static Stream<Pair<Class<? extends FeignException>, Class<? extends ClienteException>>> sourceBuscarCliente(){
-        return Stream.of(Pair.of(FeignException.NotFound.class, ClienteNotFoundException.class),
+        return Stream.of(
+                Pair.of(FeignException.NotFound.class, ClienteNotFoundException.class),
                 Pair.of(FeignException.InternalServerError.class, ClienteInternalServerErrorException.class),
-                Pair.of(FeignException.ServiceUnavailable.class, ClienteServiceUnavailableException.class)
+                Pair.of(FeignException.ServiceUnavailable.class, ClienteServiceUnavailableException.class),
+                Pair.of(FeignException.class, ClienteInternalErrorException.class)
         );
     }
 
@@ -48,7 +48,7 @@ class ClienteServiceTest {
     @MethodSource("sourceBuscarCliente")
     void buscarClienteDeveDarException(Pair<Class<? extends FeignException>, Class<? extends ClienteException>> source){
         given(clienteClient.buscarCliente(anyString())).willThrow(source.getLeft());
-        Assertions.assertThrows(source.getRight(), () -> clienteService.buscarCliente(anyString()));
+        assertThrows(source.getRight(), () -> clienteService.buscarCliente(anyString()));
     }
 
 }

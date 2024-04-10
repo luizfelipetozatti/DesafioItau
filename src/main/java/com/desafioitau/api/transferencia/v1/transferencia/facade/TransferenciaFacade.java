@@ -12,6 +12,7 @@ import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoServi
 import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaRequestDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component
+@Slf4j
 public class TransferenciaFacade {
 
     @Autowired
@@ -30,7 +32,6 @@ public class TransferenciaFacade {
     @Autowired
     NotificacaoService notificacaoService;
 
-    //TODO Transaction e pessimist locking no saldo e conta
     @Transactional
     public TransferenciaDTO efetuarTransferencia(TransferenciaRequestDTO request) throws Exception {
         var cliente = clienteService.buscarCliente(request.getIdCliente());
@@ -83,20 +84,28 @@ public class TransferenciaFacade {
     }
 
     private void verificarLimiteDiario(ContaResponseDTO conta, double valor) throws ContaException {
-        if (conta.getLimiteDiario() == 0)
-                throw new ContaLimiteDiarioZeradoException();
+        if (conta.getLimiteDiario() == 0) {
+            log.error("Conta {} com limite diario zerado", conta.getId());
+            throw new ContaLimiteDiarioZeradoException();
+        }
 
-        if (conta.getLimiteDiario() < valor)
+        if (conta.getLimiteDiario() < valor) {
+            log.error(String.format("Conta %s com limite diario inferior ao valor %s", conta.getId(), valor));
             throw new ContaLimiteDiarioInsuficienteException();
+        }
     }
 
     private void verificarSaldoDisponivel(ContaResponseDTO conta, double valor) throws ContaException {
-        if (conta.getSaldo() < valor)
+        if (conta.getSaldo() < valor) {
+            log.error("Conta {} com saldo indisponivel", conta.getId());
             throw new ContaSaldoIndisponivelException();
+        }
     }
 
     private void verificarContaAtiva(ContaResponseDTO conta) throws ContaInativaException {
-        if (!conta.isAtivo())
+        if (!conta.isAtivo()) {
+            log.error("Conta inativa com ID: {}", conta.getId());
             throw new ContaInativaException();
+        }
     }
 }

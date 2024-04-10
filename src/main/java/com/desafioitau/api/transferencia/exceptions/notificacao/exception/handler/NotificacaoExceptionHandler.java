@@ -7,12 +7,12 @@ import com.desafioitau.api.transferencia.exceptions.notificacao.exception.Notifi
 import com.desafioitau.api.transferencia.exceptions.notificacao.exception.NotificacaoTentativasExcedidasException;
 import com.desafioitau.api.transferencia.v1.constants.MessagesConstants;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class NotificacaoExceptionHandler {
 
     private ErrorInfo traduzirException(String message) {
@@ -38,5 +38,11 @@ public class NotificacaoExceptionHandler {
     @ResponseBody
     protected ErrorInfo handleNotificacaoServiceUnavailableException(NotificacaoServiceUnavailableException ex) {
         return traduzirException(MessagesConstants.MSG_SERVICO_INDISPONIVEL);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = {NotificacaoException.class})
+    protected ErrorInfo handleNotificacaoException(NotificacaoException ex) {
+        return traduzirException(ex.getMessage());
     }
 }

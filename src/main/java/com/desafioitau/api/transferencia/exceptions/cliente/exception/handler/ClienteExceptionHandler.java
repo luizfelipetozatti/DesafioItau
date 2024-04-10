@@ -1,6 +1,7 @@
 package com.desafioitau.api.transferencia.exceptions.cliente.exception.handler;
 
 import com.desafioitau.api.transferencia.exceptions.ErrorInfo;
+import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteException;
 import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteInternalServerErrorException;
 import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteServiceUnavailableException;
 import com.desafioitau.api.transferencia.exceptions.cliente.exception.ClienteNotFoundException;
@@ -33,5 +34,11 @@ public class ClienteExceptionHandler {
     @ExceptionHandler(value = {ClienteServiceUnavailableException.class})
     protected ErrorInfo handleClientServiceUnavailableException(ClienteServiceUnavailableException ex) {
         return traduzirException(MessagesConstants.MSG_SERVICO_INDISPONIVEL);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = {ClienteException.class})
+    protected ErrorInfo handleClientException(ClienteException ex) {
+        return traduzirException(ex.getMessage());
     }
 }

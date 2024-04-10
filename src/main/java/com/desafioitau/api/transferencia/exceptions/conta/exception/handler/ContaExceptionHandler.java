@@ -4,15 +4,15 @@ import com.desafioitau.api.transferencia.exceptions.ErrorInfo;
 import com.desafioitau.api.transferencia.exceptions.conta.exception.*;
 import com.desafioitau.api.transferencia.v1.constants.MessagesConstants;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ContaExceptionHandler {
 
     private ErrorInfo traduzirException(String message) {
@@ -48,5 +48,11 @@ public class ContaExceptionHandler {
 
         String defaultMessage = MessagesConstants.MSG_CONTA_INATIVA;
         return traduzirException(exceptionMap.getOrDefault(ex.getClass(), defaultMessage));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = {ContaException.class})
+    protected ErrorInfo handleContaException(ContaException ex) {
+        return traduzirException(ex.getMessage());
     }
 }

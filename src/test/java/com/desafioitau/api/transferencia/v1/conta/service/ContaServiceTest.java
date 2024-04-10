@@ -1,9 +1,7 @@
 package com.desafioitau.api.transferencia.v1.conta.service;
 
 import com.desafioitau.api.transferencia.clients.ContaClient;
-import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaInternalServerErrorException;
-import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaNotFoundException;
-import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaServiceUnavailableException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.*;
 import com.desafioitau.api.transferencia.v1.conta.fixture.ContaFixture;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
@@ -54,7 +52,8 @@ class ContaServiceTest {
     static Stream<Pair<Class<? extends FeignException>, Class<? extends Exception>>> sourceBuscarConta(){
         return Stream.of(Pair.of(FeignException.NotFound.class, ContaNotFoundException.class),
                 Pair.of(FeignException.InternalServerError.class, ContaInternalServerErrorException.class),
-                Pair.of(FeignException.ServiceUnavailable.class, ContaServiceUnavailableException.class)
+                Pair.of(FeignException.ServiceUnavailable.class, ContaServiceUnavailableException.class),
+                Pair.of(FeignException.class, ContaInternalErrorException.class)
         );
     }
 
@@ -62,7 +61,6 @@ class ContaServiceTest {
     @MethodSource("sourceBuscarConta")
     void efetuarTransferenciaDeveDarExceptionQuandoBuscarConta(Pair<Class<? extends FeignException>, Class<? extends Exception>> source) throws Exception {
         given(contaService.buscarConta(anyString())).willThrow(source.getLeft());
-
         Assertions.assertThrows(source.getRight(), () -> contaService.buscarConta(anyString()));
     }
 
@@ -71,10 +69,18 @@ class ContaServiceTest {
         Assertions.assertDoesNotThrow(() -> contaService.atualizarSaldo(any()));
     }
 
-    @Test
-    void atualizarSaldoDeveDarException() {
-        given(contaClient.atualizarSaldo(any())).willThrow(FeignException.InternalServerError.class);
-        Assertions.assertThrows(ContaInternalServerErrorException.class, () -> contaService.atualizarSaldo(any()));
+    static Stream<Pair<Class<? extends FeignException>, Class<? extends Exception>>> sourceatualizarSaldo(){
+        return Stream.of(
+                Pair.of(FeignException.InternalServerError.class, ContaInternalServerErrorException.class),
+                Pair.of(FeignException.class, ContaInternalErrorException.class)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("sourceatualizarSaldo")
+    void atualizarSaldoDeveDarException(Pair<Class<? extends FeignException>, Class<? extends Exception>> source) {
+        given(contaClient.atualizarSaldo(any())).willThrow(source.getLeft());
+        Assertions.assertThrows(source.getRight(), () -> contaService.atualizarSaldo(any()));
     }
 
     @Test
