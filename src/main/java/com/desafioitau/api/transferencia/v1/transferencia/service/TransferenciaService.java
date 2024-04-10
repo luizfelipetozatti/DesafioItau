@@ -1,5 +1,6 @@
 package com.desafioitau.api.transferencia.v1.transferencia.service;
 
+import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaRequestDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.mapper.TransferenciaMapper;
 import com.desafioitau.api.transferencia.v1.transferencia.repository.TransferenciaRepository;
@@ -12,7 +13,8 @@ public class TransferenciaService {
     @Autowired
     private TransferenciaRepository repository;
 
-    public String salvarTransaferencia(TransferenciaRequestDTO request) {
-        return repository.save(TransferenciaMapper.INSTANCE.toModel(request)).getIdTransferencia();
+    public TransferenciaDTO salvarTransaferencia(TransferenciaRequestDTO request) {
+        var transferencia = repository.save(TransferenciaMapper.INSTANCE.toModel(request));
+        return TransferenciaMapper.INSTANCE.toDTO(transferencia);
     }
 }

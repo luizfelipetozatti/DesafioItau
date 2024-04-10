@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "${external-api.notificacoes.name}", url = "${external-api.notificacoes.url}", configuration = FeignClientConfiguration.class)
 public interface NotificacaoClient {
 
-    @PostMapping(value = "${external-api.notificacoes.notificacao-endpoint}")
+//    @PostMapping(value = "${external-api.notificacoes.notificacao-endpoint}")
+    @PostMapping
     void enviarNotificacao(@RequestBody NotificacaoRequestDTO notificacao);
 }

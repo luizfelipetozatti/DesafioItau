@@ -9,6 +9,7 @@ import com.desafioitau.api.transferencia.v1.conta.dto.SaldoRequestDTO;
 import com.desafioitau.api.transferencia.v1.conta.service.ContaService;
 import com.desafioitau.api.transferencia.v1.notificacao.dto.NotificacaoRequestDTO;
 import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoService;
+import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaRequestDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class TransferenciaFacade {
 
     //TODO Transaction e pessimist locking no saldo e conta
     @Transactional
-    public String efetuarTransferencia(TransferenciaRequestDTO request) throws Exception {
+    public TransferenciaDTO efetuarTransferencia(TransferenciaRequestDTO request) throws Exception {
         var cliente = clienteService.buscarCliente(request.getIdCliente());
 
         var lock = new ReentrantLock();
@@ -43,11 +44,11 @@ public class TransferenciaFacade {
             verificarSaldoDisponivel(contaOrigem, request.getValor());
             verificarLimiteDiario(contaOrigem, request.getValor());
 
-            var idTransferencia = transferenciaService.salvarTransaferencia(request);
+            var transferenciaDTO = transferenciaService.salvarTransaferencia(request);
 
             enviarNotificacao(request);
             atualizarSaldo(request, cliente);
-            return idTransferencia;
+            return transferenciaDTO;
         } finally {
             lock.unlock();
         }

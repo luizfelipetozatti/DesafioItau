@@ -34,8 +34,7 @@ external-api:
     name: contas
     url: http://localhost:9090/contas
     dados-endpoint: /{idConta}
-    saldo-endpoint: /saldo/{saldo}
+    saldo-endpoint: /saldos
   notificacoes:
     name: bacen
     url: http://localhost:9090/notificacoes
-    notificacao-endpoint: /{notificacao}
