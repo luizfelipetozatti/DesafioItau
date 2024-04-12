@@ -2,6 +2,13 @@ spring:
   application:
     group: itau
     name: api-transferencia
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   data:
     mongodb:
       database: api_transferencia
@@ -38,3 +45,9 @@ external-api:
   notificacoes:
     name: bacen
     url: http://localhost:9090/notificacoes
+
+transferencia:
+  kafka:
+    group-id: transferencias-group-id
+    topicos:
+      transferencias: transferencias-topico

@@ -1,4 +1,4 @@
-package com.desafioitau.api.transferencia.v1.transferencia.dto;
+package com.desafioitau.api.transferencia.v1.transferencia.model.dto;
 
 import lombok.*;
 

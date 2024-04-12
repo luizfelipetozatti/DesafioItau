@@ -9,13 +9,14 @@ import com.desafioitau.api.transferencia.v1.conta.dto.SaldoRequestDTO;
 import com.desafioitau.api.transferencia.v1.conta.service.ContaService;
 import com.desafioitau.api.transferencia.v1.notificacao.dto.NotificacaoRequestDTO;
 import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoService;
-import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaDTO;
-import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaRequestDTO;
+import com.desafioitau.api.transferencia.v1.transferencia.model.StatusTransferenciaEnum;
+import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaDTO;
+import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaRequestDTO;
+import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaProducer;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -26,60 +27,69 @@ public class TransferenciaFacade {
     @Autowired
     TransferenciaService transferenciaService;
     @Autowired
+    private TransferenciaProducer transferenciaProducer;
+    @Autowired
     ClienteService clienteService;
     @Autowired
     ContaService contaService;
     @Autowired
     NotificacaoService notificacaoService;
 
-    @Transactional
-    public TransferenciaDTO efetuarTransferencia(TransferenciaRequestDTO request) throws Exception {
-        var cliente = clienteService.buscarCliente(request.getIdCliente());
+    public TransferenciaDTO enviarTransferencia(TransferenciaRequestDTO request) {
+        var transferenciaDTO = transferenciaService.salvarTransferencia(request);
+        transferenciaProducer.enviarTransferencia(transferenciaDTO);
+        return transferenciaDTO;
+    }
+
+    public void consumirTransferencia(TransferenciaDTO transferenciaDTO) throws Exception {
+        var cliente = clienteService.buscarCliente(transferenciaDTO.getIdCliente());
 
         var lock = new ReentrantLock();
         lock.lock();
         try {
-            var contaOrigem = contaService.buscarConta(request.getConta().getIdOrigem());
+            var contaOrigem = contaService.buscarConta(transferenciaDTO.getConta().getIdOrigem());
 
             verificarContaAtiva(contaOrigem);
-            verificarSaldoDisponivel(contaOrigem, request.getValor());
-            verificarLimiteDiario(contaOrigem, request.getValor());
+            verificarSaldoDisponivel(contaOrigem, transferenciaDTO.getValor());
+            verificarLimiteDiario(contaOrigem, transferenciaDTO.getValor());
 
-            var transferenciaDTO = transferenciaService.salvarTransaferencia(request);
+            enviarNotificacao(transferenciaDTO);
+            atualizarSaldo(transferenciaDTO, cliente);
 
-            enviarNotificacao(request);
-            atualizarSaldo(request, cliente);
-            return transferenciaDTO;
+            transferenciaService.atualizarStatusTransferencia(transferenciaDTO.getIdTransferencia(), StatusTransferenciaEnum.PROCESSADA);
         } finally {
             lock.unlock();
         }
     }
 
-    private void atualizarSaldo(TransferenciaRequestDTO request, ClienteResponseDTO cliente) throws ContaException {
-        contaService.atualizarSaldo(SaldoRequestDTO.builder()
-                .nomeDestino(cliente.getNome())
-                .valor(request.getValor())
-                .conta(SaldoRequestDTO.Conta.builder()
-                        .idDestino(request.getConta().getIdDestino())
-                        .idOrigem(request.getConta().getIdOrigem())
-                        .build())
-                .build());
-    }
-
-    private void enviarNotificacao(TransferenciaRequestDTO request) throws NotificacaoException {
-        var notificacao = prepararNotificacao(request);
+    private void enviarNotificacao(TransferenciaDTO transferenciaDTO) throws NotificacaoException {
+        var notificacao = prepararNotificacao(transferenciaDTO);
         notificacaoService.enviarNotificacao(notificacao);
     }
 
-    private NotificacaoRequestDTO prepararNotificacao(TransferenciaRequestDTO request) {
+    private void atualizarSaldo(TransferenciaDTO transferenciaDTO, ClienteResponseDTO cliente) throws ContaException {
+        var saldoRequest = prepararSaldo(transferenciaDTO, cliente);
+        contaService.atualizarSaldo(saldoRequest);
+    }
+
+    private SaldoRequestDTO prepararSaldo(TransferenciaDTO transferenciaDTO, ClienteResponseDTO cliente) {
+        return SaldoRequestDTO.builder()
+                .nomeDestino(cliente.getNome())
+                .valor(transferenciaDTO.getValor())
+                .conta(SaldoRequestDTO.Conta.builder()
+                        .idDestino(transferenciaDTO.getConta().getIdDestino())
+                        .idOrigem(transferenciaDTO.getConta().getIdOrigem())
+                        .build())
+                .build();
+    }
+
+    private NotificacaoRequestDTO prepararNotificacao(TransferenciaDTO transferenciaDTO) {
         return NotificacaoRequestDTO.builder()
-                .valor(request.getValor())
-                .conta(
-                        NotificacaoRequestDTO.Conta.builder()
-                                .idOrigem(request.getConta().getIdOrigem())
-                                .idDestino(request.getConta().getIdDestino())
-                                .build()
-                )
+                .valor(transferenciaDTO.getValor())
+                .conta(NotificacaoRequestDTO.Conta.builder()
+                        .idOrigem(transferenciaDTO.getConta().getIdOrigem())
+                        .idDestino(transferenciaDTO.getConta().getIdDestino())
+                        .build())
                 .build();
     }
 

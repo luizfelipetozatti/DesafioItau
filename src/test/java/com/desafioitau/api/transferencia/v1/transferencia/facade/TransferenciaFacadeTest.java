@@ -15,6 +15,7 @@ import com.desafioitau.api.transferencia.v1.conta.fixture.ContaFixture;
 import com.desafioitau.api.transferencia.v1.conta.service.ContaService;
 import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoService;
 import com.desafioitau.api.transferencia.v1.transferencia.fixture.TransferenciaFixture;
+import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaProducer;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
@@ -42,15 +43,17 @@ import static org.mockito.Mockito.verify;
 class TransferenciaFacadeTest {
 
     @Mock
-    TransferenciaService transferenciaService;
+    private TransferenciaService transferenciaService;
     @Mock
-    ClienteService clienteService;
+    private ClienteService clienteService;
     @Mock
-    ContaService contaService;
+    private ContaService contaService;
     @Mock
-    NotificacaoService notificacaoService;
+    private NotificacaoService notificacaoService;
+    @Mock
+    private TransferenciaProducer transferenciaProducer;
     @InjectMocks
-    TransferenciaFacade facade;
+    private TransferenciaFacade facade;
 
     @BeforeEach
     void reset() {
@@ -58,17 +61,24 @@ class TransferenciaFacadeTest {
     }
 
     @Test
-    void efetuarTransferenciaDeveDarSucesso() throws Exception {
+    void enviarTransferenciaDeveDarSucesso() {
+        assertDoesNotThrow(() -> facade.enviarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
+        verify(transferenciaProducer, times(1)).enviarTransferencia(any());
+    }
+
+    @Test
+    void consumirTransferenciaDeveDarSucesso() throws Exception {
         given(clienteService.buscarCliente(anyString())).willReturn(ClienteFixture.getClienteResponseDTO());
         given(contaService.buscarConta(anyString())).willReturn(ContaFixture.getContaResponseDTO());
 
-        assertDoesNotThrow(() -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
+        assertDoesNotThrow(() -> facade.consumirTransferencia(TransferenciaFixture.getTransferenciaDTO()));
 
-        verify(transferenciaService, times(1)).salvarTransaferencia(any());
         verify(contaService, times(1)).atualizarSaldo(any());
+        verify(transferenciaService, times(1)).atualizarStatusTransferencia(anyString(), any());
+        verify(notificacaoService, times(1)).enviarNotificacao(any());
     }
 
-    static Stream<Class<? extends Exception>> sourceEfetuarTransferenciaQuandoBuscarCliente () {
+    static Stream<Class<? extends Exception>> sourceConsumirTransferenciaQuandoBuscarCliente () {
         return Stream.of(ClienteNotFoundException.class,
                 ClienteInternalServerErrorException.class,
                 ClienteServiceUnavailableException.class
@@ -76,17 +86,18 @@ class TransferenciaFacadeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("sourceEfetuarTransferenciaQuandoBuscarCliente")
-    void efetuarTransferenciaDeveDarExceptionQuandoBuscarCliente(Class<? extends Exception> source) throws Exception {
+    @MethodSource("sourceConsumirTransferenciaQuandoBuscarCliente")
+    void consumirTransferenciaDeveDarExceptionQuandoBuscarCliente(Class<? extends Exception> source) throws Exception {
         given(clienteService.buscarCliente(anyString())).willThrow(source);
 
-        Assertions.assertThrows(source, () -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
+        Assertions.assertThrows(source, () -> facade.consumirTransferencia(TransferenciaFixture.getTransferenciaDTO()));
 
-        verify(transferenciaService, times(0)).salvarTransaferencia(any());
         verify(contaService, times(0)).atualizarSaldo(any());
+        verify(transferenciaService, times(0)).atualizarStatusTransferencia(anyString(), any());
+        verify(notificacaoService, times(0)).enviarNotificacao(any());
     }
 
-    static Stream<Class<? extends Exception>> sourceEfetuarTransferenciaQuandoBuscarConta () {
+    static Stream<Class<? extends Exception>> sourceConsumirTransferenciaQuandoBuscarConta () {
         return Stream.of(
                 ContaNotFoundException.class,
                 ContaInternalServerErrorException.class,
@@ -95,17 +106,18 @@ class TransferenciaFacadeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("sourceEfetuarTransferenciaQuandoBuscarConta")
-    void efetuarTransferenciaDeveDarExceptionQuandoBuscarConta(Class<? extends Exception> source) throws Exception {
+    @MethodSource("sourceConsumirTransferenciaQuandoBuscarConta")
+    void consumirTransferenciaDeveDarExceptionQuandoBuscarConta(Class<? extends Exception> source) throws Exception {
         given(contaService.buscarConta(anyString())).willThrow(source);
 
-        Assertions.assertThrows(source, () -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
+        Assertions.assertThrows(source, () -> facade.consumirTransferencia(TransferenciaFixture.getTransferenciaDTO()));
 
-        verify(transferenciaService, times(0)).salvarTransaferencia(any());
         verify(contaService, times(0)).atualizarSaldo(any());
+        verify(transferenciaService, times(0)).atualizarStatusTransferencia(anyString(), any());
+        verify(notificacaoService, times(0)).enviarNotificacao(any());
     }
 
-    static Stream<Pair<Class<? extends Exception>, ContaResponseDTO>> sourceEfetuarTransferenciaDeveDarException () {
+    static Stream<Pair<Class<? extends Exception>, ContaResponseDTO>> sourceConsumirTransferenciaDeveDarException () {
         return Stream.of(
                 Pair.of(ContaInativaException.class, ContaFixture.getContaResponseDTOInativa()),
                 Pair.of(ContaSaldoIndisponivelException.class, ContaFixture.getContaResponseDTOSaldoIndisponivel()),
@@ -115,17 +127,18 @@ class TransferenciaFacadeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("sourceEfetuarTransferenciaDeveDarException")
-    void efetuarTransferenciaDeveDarException(Pair<Class<? extends Exception>, ContaResponseDTO> source) throws Exception {
+    @MethodSource("sourceConsumirTransferenciaDeveDarException")
+    void consumirTransferenciaDeveDarException(Pair<Class<? extends Exception>, ContaResponseDTO> source) throws Exception {
         given(contaService.buscarConta(anyString())).willReturn(source.getRight());
 
-        Assertions.assertThrows(source.getLeft(), () -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
+        Assertions.assertThrows(source.getLeft(), () -> facade.consumirTransferencia(TransferenciaFixture.getTransferenciaDTO()));
 
-        verify(transferenciaService, times(0)).salvarTransaferencia(any());
         verify(contaService, times(0)).atualizarSaldo(any());
+        verify(transferenciaService, times(0)).atualizarStatusTransferencia(anyString(), any());
+        verify(notificacaoService, times(0)).enviarNotificacao(any());
     }
 
-    static Stream<Class<? extends NotificacaoException>> sourceEfetuarTransferenciaQuandoEnviarNotificacao() {
+    static Stream<Class<? extends NotificacaoException>> sourceConsumirTransferenciaQuandoEnviarNotificacao() {
         return Stream.of(
                 NotificacaoTentativasExcedidasException.class,
                 NotificacaoInternalServerErrorException.class,
@@ -134,16 +147,17 @@ class TransferenciaFacadeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("sourceEfetuarTransferenciaQuandoEnviarNotificacao")
-    void efetuarTransferenciaDeveDarExceptionQuantoEnviarNotificacao(Class<? extends NotificacaoException> source) throws Exception {
+    @MethodSource("sourceConsumirTransferenciaQuandoEnviarNotificacao")
+    void consumirTransferenciaDeveDarExceptionQuantoEnviarNotificacao(Class<? extends NotificacaoException> source) throws Exception {
         willThrow(source).given(notificacaoService).enviarNotificacao(any());
         given(clienteService.buscarCliente(anyString())).willReturn(ClienteFixture.getClienteResponseDTO());
         given(contaService.buscarConta(anyString())).willReturn(ContaFixture.getContaResponseDTO());
 
-        Assertions.assertThrows(source, () -> facade.efetuarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
+        Assertions.assertThrows(source, () -> facade.consumirTransferencia(TransferenciaFixture.getTransferenciaDTO()));
 
-        verify(transferenciaService, times(1)).salvarTransaferencia(any());
         verify(contaService, times(0)).atualizarSaldo(any());
+        verify(transferenciaService, times(0)).atualizarStatusTransferencia(anyString(), any());
+        verify(notificacaoService, times(1)).enviarNotificacao(any());
     }
 
 }

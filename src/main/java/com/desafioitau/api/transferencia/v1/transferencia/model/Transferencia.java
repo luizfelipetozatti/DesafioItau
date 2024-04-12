@@ -1,6 +1,5 @@
 package com.desafioitau.api.transferencia.v1.transferencia.model;
 
-import com.desafioitau.api.transferencia.v1.transferencia.dto.TransferenciaRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +19,8 @@ public class Transferencia {
     private String idCliente;
     private double valor;
     private Conta conta;
+    @Builder.Default
+    private StatusTransferenciaEnum statusTransferenciaEnum = StatusTransferenciaEnum.PENDENTE;
 
     @AllArgsConstructor
     @NoArgsConstructor

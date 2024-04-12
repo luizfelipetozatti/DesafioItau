@@ -1,7 +1,10 @@
 package com.desafioitau.api.transferencia.v1.conta.service;
 
 import com.desafioitau.api.transferencia.clients.ContaClient;
-import com.desafioitau.api.transferencia.exceptions.conta.exception.*;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaInternalErrorException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaInternalServerErrorException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaNotFoundException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaServiceUnavailableException;
 import com.desafioitau.api.transferencia.v1.conta.fixture.ContaFixture;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
@@ -26,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-//@ExtendWith(SpringExtension.class)
 @SpringBootTest
 class ContaServiceTest {
 
