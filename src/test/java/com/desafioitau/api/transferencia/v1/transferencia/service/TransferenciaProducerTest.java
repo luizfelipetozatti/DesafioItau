@@ -1,20 +1,23 @@
 package com.desafioitau.api.transferencia.v1.transferencia.service;
 
 import com.desafioitau.api.transferencia.v1.transferencia.fixture.TransferenciaFixture;
-import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class TransferenciaProducerTest {
 
-    @MockBean
-    private KafkaTemplate<String, TransferenciaDTO> kafkaTemplate;
-    @Autowired
+    @Mock
+    private KafkaTemplate<String, String> kafkaTemplate;
+    @Mock
+    private ObjectMapper objectMapper;
+    @InjectMocks
     private TransferenciaProducer transferenciaProducer;
 
     @Test

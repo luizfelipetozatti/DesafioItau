@@ -1,6 +1,7 @@
 package com.desafioitau.api.transferencia.v1.transferencia.service;
 
 import com.desafioitau.api.transferencia.v1.transferencia.fixture.TransferenciaFixture;
+import com.desafioitau.api.transferencia.v1.transferencia.model.StatusTransferenciaEnum;
 import com.desafioitau.api.transferencia.v1.transferencia.repository.TransferenciaRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,12 @@ class TransferenciaServiceTest {
     @Test
     void atualizarStatusTransferenciaDeveDarSucesso() {
         Assertions.assertDoesNotThrow(() -> service.atualizarStatusTransferencia(anyString(), any()));
+    }
+
+    @Test
+    void salvarTransferenciaComErroDeveDarSucesso() {
+        Assertions.assertDoesNotThrow(() -> service.salvarTransferenciaComErro(TransferenciaFixture.getTransferenciaDTO(),
+                StatusTransferenciaEnum.ERRO_ATUALIZA_SALDO, ""));
     }
 
 }

@@ -4,6 +4,7 @@ import com.desafioitau.api.transferencia.v1.constants.MessagesConstants;
 import com.desafioitau.api.transferencia.v1.transferencia.facade.TransferenciaFacade;
 import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaRequestDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,7 +27,7 @@ public class TransferenciaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = MessagesConstants.MSG_TRANSFERENCIA_REALIZADA_COM_SUCESSO)
     } )
-    public ResponseEntity<TransferenciaDTO> enviarTransferencia(@RequestBody TransferenciaRequestDTO transferenciaRequestDTO) {
-        return ResponseEntity.ok().body(facade.enviarTransferencia(transferenciaRequestDTO));
+    public ResponseEntity<String> enviarTransferencia(@RequestBody TransferenciaRequestDTO transferenciaRequestDTO) throws JsonProcessingException {
+        return ResponseEntity.ok().body(facade.enviarTransferencia(transferenciaRequestDTO).getIdTransferencia());
     }
 }

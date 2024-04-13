@@ -1,41 +1,82 @@
-version: '3'
+networks:
+  broker-kafka:
+    driver: bridge
+
 services:
-  # wiremock:
-  #   image: rodolpheche/wiremock:2.30.1
-  #   ports:
-  #     - "127.0.0.1:9090:8080"
-  #   volumes:
-  #     - ./wiremock/mappings:/home/wiremock/mappings
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.6.1
-    container_name: zookeeper
+  wiremock:
+    image: rodolpheche/wiremock:2.30.1
+    container_name: wiremock
     ports:
-      - "2181:2181"
+      - 9090:8080
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - kafka-net
+      - broker-kafka
+
   kafka:
-#    image: wurstmeister/kafka
-    image: confluentinc/cp-kafka:7.6.1
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    networks:
+      - broker-kafka
     depends_on:
       - zookeeper
-    container_name: kafka
     ports:
-      - "9092:9092"
+      - 9092:9092
     environment:
       KAFKA_BROKER_ID: 1
-#      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
-#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9092
-#      KAFKA_LISTENERS: listeners=PLAINTEXT://0.0.0.0:9092
-#      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "transferencias-topico:3:1"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: transferencias-topico:2:1
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
     networks:
-      - kafka-net
-networks:
-  kafka-net:
-    driver: bridge
+      - broker-kafka
+    depends_on:
+      - kafka
+    ports:
+      - 19000:9000
+    environment:
+      KAFKA_BROKERCONNECT: kafka:29092
+
+#  mongo-express:
+#    image: mongo-express
+#    container_name: mongo-express
+#    ports:
+#      - 8081:8081
+#    environment:
+#      ME_CONFIG_BASICAUTH_USERNAME: luiztozatti
+#      ME_CONFIG_BASICAUTH_PASSWORD: MongoExpress2024!
+#      ME_CONFIG_MONGODB_PORT: 27017
+#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+#      ME_CONFIG_MONGODB_ADMINPASSWORD: MongoDB2024!
+#    links:
+#      - mongo
+#    networks:
+#      - broker-kafka
+#
+#  mongo:
+#    image: mongo
+#    container_name: mongo
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: MongoDB2024!
+#    ports:
+#      - 27017:27017
+#    volumes:
+#      - ./mongodb:/data/db
+#    networks:
+#      - broker-kafka

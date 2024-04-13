@@ -49,4 +49,15 @@ public class TransferenciaFixture {
                         .build())
                 .build();
     }
+
+    public static String getTransferenciaJson() {
+        return "  {\n" +
+                "    \"idCliente\": \"2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f\",\n" +
+                "    \"valor\": 1000.00,\n" +
+                "    \"conta\": {\n" +
+                "        \"idOrigem\": \"d0d32142-74b7-4aca-9c68-838aeacef96b\",\n" +
+                "        \"idDestino\": \"41313d7b-bd75-4c75-9dea-1f4be434007f\"\n" +
+                "    }\n" +
+                "  }";
+    }
 }

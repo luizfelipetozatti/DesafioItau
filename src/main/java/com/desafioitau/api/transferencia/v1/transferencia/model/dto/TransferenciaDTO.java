@@ -17,6 +17,7 @@ public class TransferenciaDTO {
     private double valor;
     private Conta conta;
     private StatusTransferenciaEnum statusTransferenciaEnum;
+    private String StatusTransferenciaDescricaoErro;
 
     @AllArgsConstructor
     @NoArgsConstructor

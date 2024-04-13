@@ -12,6 +12,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,6 +32,7 @@ class TransferenciaControllerTest {
 
     @Test
     void enviarTransferenciaDeveDarSucesso() throws Exception {
+        given(facade.enviarTransferencia(any())).willReturn(TransferenciaFixture.getTransferenciaDTO());
         var jsonRequest = objectMapper.writeValueAsString(TransferenciaFixture.getTransferenciaRequestDTO());
 
         mvc.perform(post(V1_TRANSFERENCIAS)

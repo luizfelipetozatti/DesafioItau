@@ -32,7 +32,7 @@ public class ClienteService {
             } else if (ex instanceof FeignException.ServiceUnavailable) {
                 throw new ClienteServiceUnavailableException(ex);
             } else {
-                throw new ClienteInternalErrorException(ex);
+                throw new ClienteClientException(ex);
             }
         }
     }

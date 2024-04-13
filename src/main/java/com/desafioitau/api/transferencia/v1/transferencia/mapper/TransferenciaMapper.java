@@ -12,5 +12,6 @@ public interface TransferenciaMapper {
     TransferenciaMapper INSTANCE = Mappers.getMapper(TransferenciaMapper.class);
 
     Transferencia toModel(TransferenciaRequestDTO request);
+    Transferencia toModel(TransferenciaDTO dto);
     TransferenciaDTO toDTO(Transferencia model);
 }

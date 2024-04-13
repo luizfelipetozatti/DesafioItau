@@ -1,7 +1,7 @@
 package com.desafioitau.api.transferencia.v1.conta.service;
 
 import com.desafioitau.api.transferencia.clients.ContaClient;
-import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaInternalErrorException;
+import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaClientException;
 import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaInternalServerErrorException;
 import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaNotFoundException;
 import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaServiceUnavailableException;
@@ -55,7 +55,7 @@ class ContaServiceTest {
         return Stream.of(Pair.of(FeignException.NotFound.class, ContaNotFoundException.class),
                 Pair.of(FeignException.InternalServerError.class, ContaInternalServerErrorException.class),
                 Pair.of(FeignException.ServiceUnavailable.class, ContaServiceUnavailableException.class),
-                Pair.of(FeignException.class, ContaInternalErrorException.class)
+                Pair.of(FeignException.class, ContaClientException.class)
         );
     }
 
@@ -74,7 +74,7 @@ class ContaServiceTest {
     static Stream<Pair<Class<? extends FeignException>, Class<? extends Exception>>> sourceatualizarSaldo(){
         return Stream.of(
                 Pair.of(FeignException.InternalServerError.class, ContaInternalServerErrorException.class),
-                Pair.of(FeignException.class, ContaInternalErrorException.class)
+                Pair.of(FeignException.class, ContaClientException.class)
         );
     }
 

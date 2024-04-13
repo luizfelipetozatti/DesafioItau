@@ -1,34 +1,41 @@
 package com.desafioitau.api.transferencia.v1.transferencia.service;
 
+import com.desafioitau.api.transferencia.exceptions.transferencia.TransferenciaClientException;
+import com.desafioitau.api.transferencia.exceptions.transferencia.TransferenciaException;
 import com.desafioitau.api.transferencia.v1.transferencia.facade.TransferenciaFacade;
+import com.desafioitau.api.transferencia.v1.transferencia.fixture.TransferenciaFixture;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-                        
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class TransferenciaConsumerTest {
 
     private static final String TOPICO = "topico_teste";
 
-    @MockBean
+    @Mock
     private TransferenciaFacade transferenciaFacade;
-    @Autowired
+    @Mock
+    private ObjectMapper objectMapper;
+    @InjectMocks
     private TransferenciaConsumer transferenciaConsumer;
 
     @Test
-    void consumirTransferenciaDeveDarSucesso() throws Exception {
-        Assertions.assertDoesNotThrow(() -> transferenciaConsumer.consumirTransferencia(any(), 0, TOPICO, 0));
+    void consumirTransferenciaDeveDarSucesso() {
+        Assertions.assertDoesNotThrow(() -> transferenciaConsumer.consumirTransferencia(TransferenciaFixture.getTransferenciaJson(), 0, TOPICO, 0));
     }
 
     @Test
     void consumirTransferenciaDeveDarException() throws Exception {
-        doThrow(Exception.class).when(transferenciaFacade).consumirTransferencia(any());
-        Assertions.assertThrows(Exception.class, () -> transferenciaConsumer.consumirTransferencia(any(), 0, TOPICO, 0));
+        doThrow(TransferenciaClientException.class).when(transferenciaFacade).consumirTransferencia(any());
+        Assertions.assertThrows(TransferenciaException.class, () -> transferenciaConsumer.consumirTransferencia(TransferenciaFixture.getTransferenciaJson(), 0, TOPICO, 0));
     }
 
 }

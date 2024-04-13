@@ -33,7 +33,7 @@ public class ContaService {
             } else if (ex instanceof FeignException.ServiceUnavailable) {
                 throw new ContaServiceUnavailableException(ex);
             } else {
-                throw new ContaInternalErrorException(ex);
+                throw new ContaClientException(ex);
             }
         }
     }
@@ -48,7 +48,7 @@ public class ContaService {
             if (ex instanceof FeignException.InternalServerError) {
                 throw new ContaInternalServerErrorException(ex);
             } else {
-                throw new ContaInternalErrorException(ex);
+                throw new ContaClientException(ex);
             }
         }
     }

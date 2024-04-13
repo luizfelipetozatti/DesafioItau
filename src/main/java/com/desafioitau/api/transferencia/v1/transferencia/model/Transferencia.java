@@ -21,6 +21,7 @@ public class Transferencia {
     private Conta conta;
     @Builder.Default
     private StatusTransferenciaEnum statusTransferenciaEnum = StatusTransferenciaEnum.PENDENTE;
+    private String StatusTransferenciaDescricaoErro;
 
     @AllArgsConstructor
     @NoArgsConstructor

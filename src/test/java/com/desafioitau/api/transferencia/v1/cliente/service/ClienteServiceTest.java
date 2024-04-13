@@ -40,7 +40,7 @@ class ClienteServiceTest {
                 Pair.of(FeignException.NotFound.class, ClienteNotFoundException.class),
                 Pair.of(FeignException.InternalServerError.class, ClienteInternalServerErrorException.class),
                 Pair.of(FeignException.ServiceUnavailable.class, ClienteServiceUnavailableException.class),
-                Pair.of(FeignException.class, ClienteInternalErrorException.class)
+                Pair.of(FeignException.class, ClienteClientException.class)
         );
     }
 

@@ -33,7 +33,7 @@ public class NotificacaoService {
             } else if (ex instanceof FeignException.ServiceUnavailable) {
                 throw new NotificacaoServiceUnavailableException(ex);
             } else {
-                throw new NotificacaoInternalErrorException(ex);
+                throw new NotificacaoClientException(ex);
             }
         }
     }
