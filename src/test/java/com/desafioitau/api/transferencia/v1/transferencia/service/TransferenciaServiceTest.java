@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(SpringExtension.class)
@@ -31,6 +32,11 @@ class TransferenciaServiceTest {
     void salvarTransaferenciaDeveDarSucesso() {
         given(repository.save(any())).willReturn(TransferenciaFixture.getTransferencia());
         Assertions.assertDoesNotThrow(() -> service.salvarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
+    }
+
+    @Test
+    void atualizarStatusTransferenciaDeveDarSucesso() {
+        Assertions.assertDoesNotThrow(() -> service.atualizarStatusTransferencia(anyString(), any()));
     }
 
 }

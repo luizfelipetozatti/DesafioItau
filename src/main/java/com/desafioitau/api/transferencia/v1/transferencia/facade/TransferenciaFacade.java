@@ -16,6 +16,7 @@ import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaP
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -35,6 +36,7 @@ public class TransferenciaFacade {
     @Autowired
     NotificacaoService notificacaoService;
 
+    @Async
     public TransferenciaDTO enviarTransferencia(TransferenciaRequestDTO request) {
         var transferenciaDTO = transferenciaService.salvarTransferencia(request);
         transferenciaProducer.enviarTransferencia(transferenciaDTO);

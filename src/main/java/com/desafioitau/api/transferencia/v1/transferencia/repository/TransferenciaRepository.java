@@ -10,5 +10,5 @@ public interface TransferenciaRepository extends MongoRepository<Transferencia, 
 
     @Query("{ _id: ObjectId(?0) }")
     @Update("{ $set: {'statusTransferencia': ?1} }")
-    void atualizarStatusTransferencia(String transferenciaID, StatusTransferenciaEnum statusTransferenciaEnum);
+    void findByIdAndUpdateStatusTransferencia(String transferenciaID, StatusTransferenciaEnum statusTransferenciaEnum);
 }

@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class SpringDocConfigurationTest {
 
     private static final String HOST = "host";
@@ -19,7 +19,7 @@ class SpringDocConfigurationTest {
     private SpringDocConfiguration configuration;
 
     @Test
-    void publicApiV1() {
+    void publicApiV1DeveDarSucesso() {
 
         var result = configuration.publicApiV1();
 
@@ -28,7 +28,7 @@ class SpringDocConfigurationTest {
     }
 
     @Test
-    void customOpenAPI() {
+    void customOpenAPIDeveDarSucesso() {
 
         var result = configuration.customOpenAPI(HOST);
 

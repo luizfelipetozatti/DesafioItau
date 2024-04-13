@@ -24,6 +24,6 @@ public class TransferenciaService {
 
     public void atualizarStatusTransferencia(String transferenciaID, StatusTransferenciaEnum statusTransferenciaEnum) {
         log.info("Atualizar status transferencia no banco.");
-        repository.atualizarStatusTransferencia(transferenciaID, statusTransferenciaEnum);
+        repository.findByIdAndUpdateStatusTransferencia(transferenciaID, statusTransferenciaEnum);
     }
 }
