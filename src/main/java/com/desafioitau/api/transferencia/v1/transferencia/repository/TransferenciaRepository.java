@@ -9,6 +9,6 @@ import org.springframework.data.mongodb.repository.Update;
 public interface TransferenciaRepository extends MongoRepository<Transferencia, String> {
 
     @Query("{ _id: ObjectId(?0) }")
-    @Update("{ $set: {'statusTransferencia': ?1} }")
+    @Update("{ $set: {'statusTransferenciaEnum': ?1} }")
     void findByIdAndUpdateStatusTransferencia(String transferenciaID, StatusTransferenciaEnum statusTransferenciaEnum);
 }

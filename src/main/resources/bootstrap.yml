@@ -20,8 +20,8 @@ spring:
   data:
     mongodb:
       database: api_transferencia
-      uri: mongodb://localhost:27017
-      replicaSet: repDB
+      uri: mongodb://root:pass@mongo:27018/
+#      uri: mongodb://localhost:27017
 
 resilience4j:
   circuitbreaker:
