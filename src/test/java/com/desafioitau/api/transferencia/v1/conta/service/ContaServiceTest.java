@@ -1,5 +1,6 @@
 package com.desafioitau.api.transferencia.v1.conta.service;
 
+import com.desafioitau.api.transferencia.clients.ClienteClient;
 import com.desafioitau.api.transferencia.clients.ContaClient;
 import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaClientException;
 import com.desafioitau.api.transferencia.exceptions.conta.exception.ContaInternalServerErrorException;
@@ -10,15 +11,17 @@ import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -29,7 +32,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "spring.config.location=classpath:bootstrap-test.yml"
+})
+@ActiveProfiles("test")
 class ContaServiceTest {
 
     @MockBean
@@ -38,6 +44,13 @@ class ContaServiceTest {
     private CircuitBreakerRegistry circuitBreakerRegistry;
     @Autowired
     private ContaService contaService;
+
+//    @BeforeAll
+//    void setUp() {
+//        ReflectionTestUtils.setField(contaService, "URL_CLIENTES", "URL");
+//        ReflectionTestUtils.setField(contaService, "s3importDir", "dir/");
+//        ReflectionTestUtils.setField(contaService, "s3Bucket", "bucket");
+//    }
 
     @BeforeEach
     public void reset() {

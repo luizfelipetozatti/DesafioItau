@@ -6,7 +6,7 @@ spring:
     group: itau
     name: api-transferencia
   kafka:
-    bootstrap-servers: ${BOOTSTRAP_SERVERS}
+    bootstrap-servers: http://localhost:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -20,7 +20,7 @@ spring:
   data:
     mongodb:
       database: api_transferencia
-      uri: ${URI_MONGODB}
+      uri: mongodb://localhost:27017
 
 resilience4j:
   circuitbreaker:
@@ -42,16 +42,16 @@ resilience4j:
 external-api:
   clientes:
     name: clientes
-    url: ${URL_CLIENTES}
+    url: teste
     dados-endpoint: /{idCliente}
   contas:
     name: contas
-    url: ${URL_CONTAS}
+    url: teste
     dados-endpoint: /{idConta}
     saldo-endpoint: /saldos
   notificacoes:
     name: bacen
-    url: ${URL_NOTIFICACOES}
+    url: teste
 
 transferencia:
   kafka:

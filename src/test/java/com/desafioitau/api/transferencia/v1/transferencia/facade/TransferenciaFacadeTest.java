@@ -70,6 +70,7 @@ class TransferenciaFacadeTest {
 
     @Test
     void enviarTransferenciaDeveDarSucesso() throws JsonProcessingException {
+        given(transferenciaService.salvarTransferencia(any())).willReturn(TransferenciaFixture.getTransferenciaDTO());
         assertDoesNotThrow(() -> facade.enviarTransferencia(TransferenciaFixture.getTransferenciaRequestDTO()));
         verify(transferenciaProducer, times(1)).enviarTransferencia(any());
     }

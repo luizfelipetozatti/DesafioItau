@@ -1,26 +1,29 @@
 services:
-  wiremock:
-    image: rodolpheche/wiremock:2.30.1
-    container_name: wiremock
-    ports:
-      - 9090:8080
-    volumes:
-      - ./wiremock/mappings:/home/wiremock/mappings
-
-  zookeeper:
-    image: wurstmeister/zookeeper:latest
-    container_name: zookeeper
+  api-transferencia:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: api-transferencia:latest
+    container_name: api-transferencia
     networks:
       - main_net
+    ports:
+      - 8080:8080
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      URI_MONGODB: mongodb://root:pass@mongo
+      BOOTSTRAP_SERVERS: kafka:29092
+      URL_CLIENTES: wiremock:8080/clientes
+      URL_NOTIFICACOES: wiremock:8080/notificacoes
+      URL_CONTAS: wiremock:8080/contas
+    depends_on:
+      mongo:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
 
   kafka:
     image: wurstmeister/kafka:latest
     container_name: kafka
-    depends_on:
-      - zookeeper
     networks:
       - main_net
     ports:
@@ -35,23 +38,32 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_CREATE_TOPICS: transferencias-topico:2:1
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "kafka:9092", "--list" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: on-failure
 
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop
-    depends_on:
-      - kafka
     networks:
       - main_net
     ports:
       - 19000:9000
     environment:
       KAFKA_BROKERCONNECT: kafka:29092
+    depends_on:
+      kafka:
+        condition: service_healthy
 
   mongo:
     image: mongo:4.4.17-focal
     container_name: mongodb
-    restart: always
     networks:
       - main_net
     ports:
@@ -60,11 +72,16 @@ services:
       MONGO_INITDB_DATABASE: api_transferencia
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: pass
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: on-failure
 
   mongo-express:
     image: mongo-express:0.54.0
     container_name: mongo-express
-    restart: always
     networks:
       - main_net
     ports:
@@ -73,6 +90,34 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:pass@mongo:27018/
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  wiremock:
+    image: rodolpheche/wiremock:2.30.1
+    container_name: wiremock
+    networks:
+      - main_net
+    ports:
+      - 9090:8080
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    networks:
+      - main_net
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: [ "CMD", "sh", "-c", "echo 'ruok' | nc -w 1 localhost 2181 | grep -q imok" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: on-failure
 
 networks:
   main_net:

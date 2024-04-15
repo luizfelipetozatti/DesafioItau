@@ -16,6 +16,7 @@ import com.desafioitau.api.transferencia.v1.notificacao.service.NotificacaoServi
 import com.desafioitau.api.transferencia.v1.transferencia.model.StatusTransferenciaEnum;
 import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaRequestDTO;
+import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaResponseDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaProducer;
 import com.desafioitau.api.transferencia.v1.transferencia.service.TransferenciaService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,10 +41,10 @@ public class TransferenciaFacade {
     @Autowired
     NotificacaoService notificacaoService;
 
-    public TransferenciaDTO enviarTransferencia(TransferenciaRequestDTO request) throws JsonProcessingException {
+    public TransferenciaResponseDTO enviarTransferencia(TransferenciaRequestDTO request) throws JsonProcessingException {
         var transferenciaDTO = transferenciaService.salvarTransferencia(request);
         transferenciaProducer.enviarTransferencia(transferenciaDTO);
-        return transferenciaDTO;
+        return TransferenciaResponseDTO.builder().idTransferencia(transferenciaDTO.getIdTransferencia()).build();
     }
 
     public void consumirTransferencia(TransferenciaDTO transferenciaDTO) throws TransferenciaException {

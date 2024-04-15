@@ -32,7 +32,7 @@ class TransferenciaControllerTest {
 
     @Test
     void enviarTransferenciaDeveDarSucesso() throws Exception {
-        given(facade.enviarTransferencia(any())).willReturn(TransferenciaFixture.getTransferenciaDTO());
+        given(facade.enviarTransferencia(any())).willReturn(TransferenciaFixture.getTransferenciaResponseDTO());
         var jsonRequest = objectMapper.writeValueAsString(TransferenciaFixture.getTransferenciaRequestDTO());
 
         mvc.perform(post(V1_TRANSFERENCIAS)

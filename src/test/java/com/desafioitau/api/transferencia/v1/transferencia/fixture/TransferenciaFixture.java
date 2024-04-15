@@ -4,6 +4,7 @@ import com.desafioitau.api.transferencia.v1.transferencia.model.StatusTransferen
 import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaRequestDTO;
 import com.desafioitau.api.transferencia.v1.transferencia.model.Transferencia;
+import com.desafioitau.api.transferencia.v1.transferencia.model.dto.TransferenciaResponseDTO;
 
 public class TransferenciaFixture {
 
@@ -59,5 +60,9 @@ public class TransferenciaFixture {
                 "        \"idDestino\": \"41313d7b-bd75-4c75-9dea-1f4be434007f\"\n" +
                 "    }\n" +
                 "  }";
+    }
+
+    public static TransferenciaResponseDTO getTransferenciaResponseDTO() {
+        return TransferenciaResponseDTO.builder().idTransferencia("2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f").build();
     }
 }

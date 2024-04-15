@@ -10,5 +10,5 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 public class TransferenciaResponseDTO {
 
-    private UUID idTransferencia;
+    private String idTransferencia;
 }
