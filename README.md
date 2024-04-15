@@ -73,3 +73,6 @@ Pode-se utilizar o New Relic. Uma plataforma de monitoramento e performance de a
 
 ## Arquitetura
 ![](Arquitetura.drawio.png)
+
+## Cobertura de testes
+![](cobertura_testes.png)
