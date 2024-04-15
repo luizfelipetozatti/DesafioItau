@@ -1,5 +1,5 @@
 <div align="center">
-  <img height="300" src="novo-logo-itau-png-sem-fundo.png" width="300"/>
+  <img height="150" width="250" src="novo-logo-itau-png-sem-fundo.png"/>
 </div>
 
 # Desafio itaú
