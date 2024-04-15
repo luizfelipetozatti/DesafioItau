@@ -1,4 +1,6 @@
-<img height="300" src="novo-logo-itau-png-sem-fundo.png" width="300"/>
+<div align="center">
+  <img height="300" src="novo-logo-itau-png-sem-fundo.png" width="300"/>
+</div>
 
 # Desafio itaú
 
