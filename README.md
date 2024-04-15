@@ -65,7 +65,7 @@ http://localhost:8080/v1/transferencias
 + Dividir o projeto em 3 diferentes:
   + **api-transferencia:** responsável por receber as requisições de transferência e postar na fila do kafka
   + **consumer-transferencia:** responsável por consumir as mensagens postadas no kafka
-  + **notificacao-transferencia:** responsável por enviar uma notificação psuh para o celular do usuário informando os dados e status da transferência (braze por exemplo)
+  + **notificacao-transferencia:** responsável por enviar uma notificação push para o celular do usuário informando os dados e status da transferência (braze por exemplo)
 
 + Utilização de cache no método que consulta os dados do cliente.
   + Um cache como uma pilha/fila com limite de 1000 registros, por exemplo.
@@ -73,8 +73,12 @@ http://localhost:8080/v1/transferencias
 ## Proposta de observabilidade
 Pode-se utilizar o New Relic. Uma plataforma de monitoramento e performance de aplicações (Application Performance Monitoring - APM). Com ele é possível acompanhar e coletar todo tipo de métrica, logs e eventos. Criar dashboards para ajudar identificar bugs, consumo de memória, CPU e uso de disco. Importante para o monitoramento dos clusters, trhoughput e erros.
 
+![](final-flashdb-dashboard.png)
+
 ## Arquitetura
+
 ![](Arquitetura.drawio.png)
 
 ## Cobertura de testes
+
 ![](cobertura_testes.png)
